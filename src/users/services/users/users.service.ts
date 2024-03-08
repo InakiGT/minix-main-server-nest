@@ -1,12 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../entities/user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  Find(query) {
+    return this.userModel.find(query).exec();
+  }
 
   async Create(data: any) {
     const hash = await bcrypt.hash(data.password, 10);
@@ -18,5 +21,15 @@ export class UsersService {
     const { password, ...rta } = model.toJSON();
 
     return rta;
+  }
+
+  async Update(id: string, changes: any) {
+    const user = this.userModel
+      .findByIdAndUpdate(id, { $set: changes }, { new: true })
+      .exec();
+    if (!user) {
+      throw new NotFoundException(`User ${id} not found`);
+    }
+    return user;
   }
 }

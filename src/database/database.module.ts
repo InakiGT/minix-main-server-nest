@@ -10,6 +10,7 @@ import config from 'src/config';
       inject: [config.KEY],
       useFactory: (configService: ConfigType<typeof config>) => {
         const { connection, user, password, dbName } = configService.mongo;
+
         return {
           uri: connection,
           user,
