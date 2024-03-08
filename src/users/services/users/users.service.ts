@@ -11,6 +11,10 @@ export class UsersService {
     return this.userModel.find(query).exec();
   }
 
+  FindOne(query) {
+    return this.userModel.findOne(query).exec();
+  }
+
   async Create(data: any) {
     const hash = await bcrypt.hash(data.password, 10);
     const newUser = new this.userModel(data);
